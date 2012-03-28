@@ -1,0 +1,53 @@
+<h1>
+	<%= link_to "Chat Asombroso", root_path %>
+<!-- Esto es un comentario -->
+</h1>
+
+<ul id="chat_container">
+<% @messages.each do |message| %>
+	<li>
+		
+		<%= message.name %> dijo: <%= message.content%>
+	
+	</li>	
+<% end %>
+</ul>
+
+<br />
+
+<%= form_for(Message.new, :remote =>true) do |f| %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :content %><br />
+    <%= f.text_area :content %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+
+<script type="text/javascript">
+
+Pusher.log = function(message) {
+  if (window.console && window.console.log) window.console.log(message);
+};
+	WEB_SOCKET_DEBUG = true ;
+
+ var pusher =new Pusher('828eef0a44d53caa842d') 
+ var channel = pusher.subscribe('DEW_Chat');
+ 
+ channel.bind('message:create',function(data){
+	var message = "<li id='message_"+ data.id + "'>"
+        message += data.name + ": "+data.content
+		message += "</li>"
+		
+		$("#chat_container").append(message);
+		$("#message_content").val("");
+		$("#message_content").focus();
+ });
+</script>
+
